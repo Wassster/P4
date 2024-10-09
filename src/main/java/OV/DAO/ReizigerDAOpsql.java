@@ -1,8 +1,7 @@
 package OV.DAO;
 
-
-
 import OV.Domein.Reiziger;
+import OV.Domein.OVChipkaart;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,19 +12,17 @@ public class ReizigerDAOpsql implements ReizigerDAO {
     private Connection con;
     private OVChipkaartDAO ovChipkaartDAO;
 
-
-    public ReizigerDAOpsql(Connection con ){
+    public ReizigerDAOpsql(Connection con, OVChipkaartDAO ovChipkaartDAO) {
         this.con = con;
-
+        this.ovChipkaartDAO = ovChipkaartDAO;
     }
-
 
     @Override
     public boolean save(Reiziger reiziger) {
         try {
-            String query = "INSERT INTO Reiziger(reiziger_id,voorletter,tussenvoegsel,achternaam,geboortedatum) VALUES (?,?,?,?,?)";
+            String query = "INSERT INTO Reiziger(reiziger_id, voorletter, tussenvoegsel, achternaam, geboortedatum) VALUES (?, ?, ?, ?, ?)";
             PreparedStatement ps = con.prepareStatement(query);
-            ps.setInt(1,reiziger.getId());
+            ps.setInt(1, reiziger.getId());
             ps.setString(2, reiziger.getVoorletters());
             ps.setString(3, reiziger.getTussenvoegsel());
             ps.setString(4, reiziger.getAchternaam());
@@ -34,19 +31,21 @@ public class ReizigerDAOpsql implements ReizigerDAO {
 
 
             if (reiziger.getOvChipkaarts() != null) {
-                OVChipkaartDAO.save(reiziger.getOvChipkaarts());
-                return true;
+                for (OVChipkaart ov : reiziger.getOvChipkaarts()) {
+                    ovChipkaartDAO.save(ov);
+                }
             }
-            return false;
-        }catch (SQLException e) {
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
 
     @Override
     public boolean update(Reiziger reiziger) {
-        try{
-            String query = "UPDATE Reiziger SET voorletter = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ? WHERE reiziger_id = ? ";
+        try {
+            String query = "UPDATE Reiziger SET voorletter = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ? WHERE reiziger_id = ?";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setString(1, reiziger.getVoorletters());
             ps.setString(2, reiziger.getTussenvoegsel());
@@ -57,24 +56,35 @@ public class ReizigerDAOpsql implements ReizigerDAO {
 
 
             if (reiziger.getOvChipkaarts() != null) {
-                OVChipkaartDAO.save(reiziger.getOvChipkaarts());
-                return true;
+                for (OVChipkaart ov : reiziger.getOvChipkaarts()) {
+                    ovChipkaartDAO.update(ov);
+                }
             }
-            return false;
-        }catch (SQLException e) {
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
 
     @Override
     public boolean delete(Reiziger reiziger) {
-        try{
-            String query = "DELETE FROM Reiziger WHERE reiziger_id = ? ";
+        try {
+
+            if (reiziger.getOvChipkaarts() != null) {
+                for (OVChipkaart ov : reiziger.getOvChipkaarts()) {
+                    ovChipkaartDAO.delete(ov);
+                }
+            }
+
+
+            String query = "DELETE FROM Reiziger WHERE reiziger_id = ?";
             PreparedStatement ps = con.prepareStatement(query);
             ps.setInt(1, reiziger.getId());
             ps.executeUpdate();
             return true;
-        }catch (SQLException e) {
+        } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -82,7 +92,7 @@ public class ReizigerDAOpsql implements ReizigerDAO {
     @Override
     public Reiziger findById(int id) {
         try {
-            String query = "SELECT * FROM reiziger WHERE id = ?";
+            String query = "SELECT * FROM Reiziger WHERE reiziger_id = ?";
             PreparedStatement pst = con.prepareStatement(query);
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
@@ -96,12 +106,11 @@ public class ReizigerDAOpsql implements ReizigerDAO {
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
 
 
-                Adres adres = adresDAO.findByReiziger(reiziger);
-                reiziger.setAdres(adres);
+                OVChipkaart ovChipkaarten = ovChipkaartDAO.findById(reiziger.getId());
+                reiziger.addOVchips(ovChipkaarten);
 
                 return reiziger;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -113,7 +122,7 @@ public class ReizigerDAOpsql implements ReizigerDAO {
     public List<Reiziger> findAll() {
         List<Reiziger> reizigers = new ArrayList<>();
         try {
-            String query = "SELECT * FROM reiziger";
+            String query = "SELECT * FROM Reiziger";
             PreparedStatement pst = con.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
 
@@ -127,8 +136,8 @@ public class ReizigerDAOpsql implements ReizigerDAO {
                 Reiziger reiziger = new Reiziger(id, voorletters, tussenvoegsel, achternaam, geboortedatum);
 
 
-                Adres adres = adresDAO.findByReiziger(reiziger);
-                reiziger.setAdres(adres);
+                OVChipkaart ovChipkaarten = ovChipkaartDAO.findById(reiziger.getId());
+                reiziger.addOVchips(ovChipkaarten);
 
                 reizigers.add(reiziger);
             }

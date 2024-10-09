@@ -38,6 +38,7 @@ public class OVChipkaart {
         return saldo;
     }
 
+
     public void setReiziger(Reiziger reiziger) {
         this.reiziger = reiziger;
     }
