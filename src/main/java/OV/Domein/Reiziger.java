@@ -46,6 +46,10 @@ public class Reiziger {
         }
     }
 
+    public void setOvChipkaarts(ArrayList<OVChipkaart> ovChipkaarts) {
+        this.ovChipkaarts = ovChipkaarts;
+    }
+
     public Date getGeboortedatum() {
         return geboortedatum;
     }
