@@ -13,13 +13,13 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-        // Setup database connection
+
         try (Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/ovchip", "postgres", "postgres");) {
 
             ReizigerDAOpsql reizigerDAO = new ReizigerDAOpsql(conn, new OVChipkaartDAOpsql(conn));
             OVChipkaartDAOpsql ovChipkaartDAO = new OVChipkaartDAOpsql(conn);
 
-            // Run the tests
+
             testReizigerDAO(reizigerDAO, ovChipkaartDAO);
         } catch (Exception e) {
             e.printStackTrace();
