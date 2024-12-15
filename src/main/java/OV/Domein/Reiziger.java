@@ -1,7 +1,5 @@
 package OV.Domein;
 
-
-import java.sql.Array;
 import java.sql.Date;
 import java.util.ArrayList;
 
@@ -12,8 +10,6 @@ public class Reiziger {
     private String achternaam;
     private Date geboortedatum;
     private ArrayList<OVChipkaart> ovChipkaarts = new ArrayList<>();
-
-
 
     public Reiziger(int id, String voorletters, String tussenvoegsel, String achternaam, Date geboortedatum) {
         this.id = id;
@@ -42,8 +38,12 @@ public class Reiziger {
     public ArrayList<OVChipkaart> getOvChipkaarts() {
         return ovChipkaarts;
     }
-    public void addOVchips(OVChipkaart ovChipkaart) {
-        ovChipkaarts.add(ovChipkaart);
+
+    public void addOVChipkaart(OVChipkaart ovChipkaart) {
+        if (!ovChipkaarts.contains(ovChipkaart)) {
+            ovChipkaarts.add(ovChipkaart);
+            ovChipkaart.setReiziger(this);
+        }
     }
 
     public Date getGeboortedatum() {
@@ -62,7 +62,6 @@ public class Reiziger {
         this.id = id;
     }
 
-
     public void setGeboortedatum(Date geboortedatum) {
         this.geboortedatum = geboortedatum;
     }
@@ -73,11 +72,11 @@ public class Reiziger {
 
     @Override
     public String toString() {
-        return String.format("Reiziger {#%d %s%s %s, geb. %s, %s}",
+        return String.format("Reiziger {#%d %s%s %s, geb. %s}",
                 id,
                 voorletters,
-                tussenvoegsel,
+                tussenvoegsel != null ? " " + tussenvoegsel : "",
                 achternaam,
-                geboortedatum.toString());
+                geboortedatum);
     }
 }

@@ -4,22 +4,28 @@ import java.sql.Date;
 
 public class OVChipkaart {
 
-    public int kaartnummer;
-    public Date geldige_tot;
-    public int klasse;
-    public double saldo;
-    public Reiziger reiziger;
+    private int kaartnummer;
+    private Date geldige_tot;
+    private int klasse;
+    private double saldo;
+    private Reiziger reiziger;
 
-    public OVChipkaart(int kaartnummer, Date geldige_tot, int klasse, int saldo) {
+    public OVChipkaart(int kaartnummer, Date geldige_tot, int klasse, double saldo) {
         this.kaartnummer = kaartnummer;
         this.geldige_tot = geldige_tot;
         this.klasse = klasse;
         this.saldo = saldo;
-
     }
 
     public Reiziger getReiziger() {
         return reiziger;
+    }
+
+    public void setReiziger(Reiziger reiziger) {
+        this.reiziger = reiziger;
+        if (reiziger != null && !reiziger.getOvChipkaarts().contains(this)) {
+            reiziger.addOVChipkaart(this); // Zorg voor consistentie
+        }
     }
 
     public Date getGeldige_tot() {
@@ -38,10 +44,6 @@ public class OVChipkaart {
         return saldo;
     }
 
-    public void setReiziger(Reiziger reiziger) {
-        this.reiziger = reiziger;
-    }
-
     public void setGeldige_tot(Date geldige_tot) {
         this.geldige_tot = geldige_tot;
     }
@@ -49,11 +51,13 @@ public class OVChipkaart {
     public void setKaartnummer(int kaartnummer) {
         this.kaartnummer = kaartnummer;
     }
+
     public void setKlasse(int klasse) {
         this.klasse = klasse;
     }
+
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
-
 }
+
