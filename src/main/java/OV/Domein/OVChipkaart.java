@@ -24,7 +24,7 @@ public class OVChipkaart {
     public void setReiziger(Reiziger reiziger) {
         this.reiziger = reiziger;
         if (reiziger != null && !reiziger.getOvChipkaarts().contains(this)) {
-            reiziger.addOVChipkaart(this); // Zorg voor consistentie
+            reiziger.addOVChipkaart(this);
         }
     }
 

@@ -50,7 +50,6 @@ public class OVChipkaartDAOpsql implements OVChipkaartDAO {
             return false;
         }
     }
-
     @Override
     public boolean delete(OVChipkaart chipkaart) {
         try {
